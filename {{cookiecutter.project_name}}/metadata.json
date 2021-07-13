@@ -1,0 +1,44 @@
+{
+    "sensor": "SATELLITE SOURCE NAME FROM WHICH IMAGES IN THE DATASET ARE USED",
+    "input_shape": "DATES,BANDS,HEIGHT,WIDTH",
+    "resolution": 50,
+    "band_ids": ["B01", "B02", "B03"],
+    "band_means": {
+      "B01": 0.485,
+      "B02": 0.456,
+      "B03": 0.406
+    },
+    "band_stds": {
+      "B01": 0.229,
+      "B02": 0.224,
+      "B03": 0.225
+    },
+    "num_classes": 2,
+    "gpu": 0,
+    
+    "augmentation": true,
+    "model": "dummy",
+  
+    "num_gpus": 1,
+    "num_workers": 1,
+    "distributed": false,
+  
+    "epochs": 1,
+    "batch_size": 2,
+    "scheduler": "step",
+    "scheduler_args": {"step_size": 15, "gamma": 0.1},
+    "optimizer": "sgd",
+    "optimizer_args": {"lr": 0.1},
+    "loss": "binary_jaccard",
+    "loss_args": {"jaccard_weight": 0.25},
+    "metrics": ["dc", "prec", "recall"],
+  
+    "project_name": "DummyRandomData",
+    "dataset_dir": "Path to your dataset directory this will be used later in train.py and dataloader.py to load dataset.",
+    "weight_dir": "Path of directory where checkpoints should be saved.",
+    "nfs_data_path": "Datastore path where dataset is.",
+    "pretrained_checkpoint": null,
+    "local_artifacts_path": "Datastore path where dataset should be copied if requried.",
+    "resume_checkpoint": null,
+    "_comment": "Train Dummy model."
+  }

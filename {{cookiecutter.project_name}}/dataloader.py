@@ -18,40 +18,17 @@ def get_train_val_metadata(args):
     tuple
         Tuple of train and validation samples.
     """
-    # geojson and image tuple 
-    train_metadata = glob.glob(os.path.join(args.dataset_dir, "train/*.geojson"))
-    val_metadata = glob.glob(os.path.join(args.dataset_dir, "test/*.geojson")) 
+    train_metadata = [1, 2]
+    val_metadata = [3, 4]
 
     return train_metadata, val_metadata
 
 
-def loader(geojson_path):
-    """Load a tile.
-    Parameters
-    ----------
-    geojson_path : str
-        GeoJSON path.
-    Returns
-    -------
-    tuple
-        (rgb, label_mask).
-    """
-    r = rio.open(geojson_path.replace('geojson', 'png'))
-    gdf = gpd.read_file(geojson_path)
-    
-    mask = np.zeros(r.shape)
-    for i in range(gdf.shape[0]):
-        xs, ys = gdf.iloc[i].geometry.exterior.coords.xy
-        rc = rio.transform.rowcol(r.transform, xs, ys)
-        poly = np.asarray(list(zip(rc[0], rc[1])))
-        rr, cc = polygon(poly[:,0], poly[:,1], mask.shape)
-        mask[rr,cc] = 1
+class DummyPreloader(data.Dataset):
+    """Dummy dataset preloader which generates one sample from the dataset.
 
-    return np.asarray([r.read()]), mask
-
-
-class RarePlanesPreloader(data.Dataset):
-    """RarePlanes Preloader.
+    Your problem might require more logic in preloader and some other functions
+    to load, preprocess and handle image, mask/vector/geojson, etc.
     Parameters
     ----------
     metadata : list
@@ -76,9 +53,7 @@ class RarePlanesPreloader(data.Dataset):
             tuple: (image, target) where target is class_index
                    of the target class.
         """
-        geojson_path = self.samples[index]
-        tile, label = loader(geojson_path)
-        return tile, label
+        return np.random.randn(1, 32, 32), np.zeros(32, 32)
 
     def __len__(self):
         return len(self.samples)
@@ -101,8 +76,8 @@ def get_dataloaders(args):
     print('train samples : ', len(train_samples))
     print('val samples : ', len(val_samples))
 
-    train_dataset = RarePlanesPreloader(train_samples, args)
-    val_dataset = RarePlanesPreloader(val_samples, args)
+    train_dataset = DummyPreloader(train_samples, args)
+    val_dataset = DummyPreloader(val_samples, args)
 
     train_loader = data.DataLoader(train_dataset,
                                    batch_size=args.batch_size,

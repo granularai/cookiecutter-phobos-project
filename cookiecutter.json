@@ -1,3 +1,13 @@
 {
-    "project_name": "phobos_project"
+    "project_name": "phobos_project",
+    "connections": ["datasets", "artifacts-store"],
+
+    "node_pool": "v100-pool",
+    "num_gpus": 1,
+    "image": "gcr.io/granular-ai/phobos:latest",
+
+    "distributed": {
+        "num_worker_replicas": 1,
+        "num_gpus": 1
+    }
 }

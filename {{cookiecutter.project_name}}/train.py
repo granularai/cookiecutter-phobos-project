@@ -33,6 +33,7 @@ experiment = None
 if not local_testing():
     experiment = Run()
 
+
 ################### Polyaxon / Local ###################
 
 ################### Arguments ###################
@@ -43,6 +44,11 @@ grain_exp = Grain(polyaxon_exp=experiment)
 args = grain_exp.parse_args_from_json('metadata.json')
 
 ################### Arguments ###################
+
+############## Distributed w/d polyaxon ################
+if args.distributed and not local_testing():
+    Runner.distributed()
+########################################################
 
 
 ################### Setup Data and Weight ###################
@@ -111,6 +117,10 @@ if args.gpu > -1:
     if args.num_gpus > 1:
         model = nn.DataParallel(model, device_ids=list(range(args.num_gpus)))
 
+elif args.distributed:
+    model = model.to(args.gpu)
+    model = nn.parallel.DistributedDataParallel(model,find_unused_parameters=False)
+
 if args.resume_checkpoint:
     """If we want to resume training from some checkpoints.
     """
@@ -134,6 +144,24 @@ runner = Runner(device=0,
                 optimizer_args=args.optimizer_args,
                 polyaxon_exp=experiment)
 
+runner = Runner(
+    model=model,
+    device=0,
+    criterion=criterion,
+    train_loader=train_loader,
+    val_loader=val_loader,
+    optimizer=args.optimizer,
+    distributed=args.distributed,
+    distributed_val=args.distributed_val,
+    max_iters = args.max_iters,
+    mode = args.mode,
+    val_frequency=args.val_frequency,
+    tensorboard_logging = True,
+    polyaxon_exp=experiment,
+    metrics = args.metrics,
+    num_classes = args.num_classes
+)
+
 ################### Intialize Runner ###################
 
 ################### Train ###################
@@ -144,28 +172,33 @@ best_dc = -1
 best_metrics = None
 
 logging.info('STARTING training')
-for epoch in range(args.epochs):
+
+for step,train_metrics,eval_metrics in runner.trainer():
     """
     Begin Training
     """
-    logging.info('SET model mode to train!')
-    runner.set_epoch_metrics()
-    train_metrics = runner.train_model()
-    eval_metrics = runner.eval_model()
     print(train_metrics)
     print(eval_metrics)
-    """
-    Store the weights of good epochs based on validation results
-    """
-    if eval_metrics['val_dc'] > best_dc:
-        cpt_path = os.path.join(args.weight_dir,
-                                'checkpoint_epoch_' + str(epoch) + '.pt')
-        torch.save(model.state_dict(), cpt_path)
-        best_dc = eval_metrics['val_dc']
+    if (not args.distributed or local_testing) or (args.distributed and dist.get_rank() == 0):
+        """
+        Store the weights of good epochs based on validation results
+        """
+        if eval_metrics['val_dc'] > best_dc:
+            cpt_path = os.path.join(args.weight_dir,
+                                    'checkpoint_epoch_' + str(step) + '.pt')
+            
+            model_dict = None
+            if args.distributed and not local_testing:
+                model_dict = model.module.state_dict()
+            else:
+                model_dict = model.state_dict()
+            
+            torch.save(model_dict, cpt_path)
+            best_dc = eval_metrics['val_dc']
 
-        best_metrics = {**train_metrics, **eval_metrics}
-        if not local_testing():
-            experiment.log_outputs(**best_metrics)
+            best_metrics = {**train_metrics, **eval_metrics}
+            if not local_testing():
+                experiment.log_outputs(**best_metrics)
 
 if not local_testing():
     experiment.log_outputs(**best_metrics)

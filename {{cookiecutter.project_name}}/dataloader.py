@@ -1,3 +1,5 @@
+from phobos.dataset import getDistLoaders
+
 import os
 import random
 import glob
@@ -5,6 +7,8 @@ import glob
 import numpy as np
 
 import torch.utils.data as data
+
+
 
 
 def get_train_val_metadata(args):
@@ -79,14 +83,13 @@ def get_dataloaders(args):
     train_dataset = DummyPreloader(train_samples, args)
     val_dataset = DummyPreloader(val_samples, args)
 
-    train_loader = data.DataLoader(train_dataset,
-                                   batch_size=args.batch_size,
-                                   shuffle=True,
-                                   num_workers=args.num_workers,
-                                   pin_memory=True)
-    val_loader = data.DataLoader(val_dataset,
-                                 batch_size=args.batch_size,
-                                 shuffle=False,
-                                 num_workers=args.num_workers,
-                                 pin_memory=True)
+    train_loader, val_loader = getDistLoaders(
+        train_dataset,
+        val_dataset,
+        batch_size=args.batch_size,
+        num_workers=args.num_workers,
+        distributed=args.distributed,
+        distributed_val=args.distributed_val
+        )
+    
     return train_loader, val_loader

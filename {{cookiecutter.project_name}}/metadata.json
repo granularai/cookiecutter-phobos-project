@@ -22,8 +22,11 @@
     "num_gpus": 1,
     "num_workers": 1,
     "distributed": false,
+    "distributed_val": false,
   
-    "epochs": 1,
+    "max_iters": 1,
+    "mode": "epoch",
+    "val_freqquency": 1,
     "batch_size": 2,
     "scheduler": "step",
     "scheduler_args": {"step_size": 15, "gamma": 0.1},

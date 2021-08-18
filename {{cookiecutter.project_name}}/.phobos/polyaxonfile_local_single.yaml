@@ -1,0 +1,17 @@
+version: 1.1
+
+kind: component
+name: {{cookiecutter.project_name}}
+
+run:
+  kind: job
+  connections: []
+  container:
+    image: {{cookiecutter.image}}
+    workingDir: "{{ '{{' }} globals.run_artifacts_path {{ '}}' }}/code"
+    command: ['/bin/bash', 'run.sh']
+    resources:
+      requests:
+        nvidia.com/gpu: {{cookiecutter.num_gpus}}
+      limits:
+        nvidia.com/gpu: {{cookiecutter.num_gpus}}

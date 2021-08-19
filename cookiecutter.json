@@ -7,7 +7,6 @@
     "image": "gcr.io/granular-ai/phobos:latest",
 
     "distributed": {
-        "num_worker_replicas": 1,
-        "num_gpus": 1
+        "num_worker_replicas": 1
     }
 }

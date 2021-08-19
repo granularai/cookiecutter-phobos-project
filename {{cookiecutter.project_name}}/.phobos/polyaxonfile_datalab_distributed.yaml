@@ -20,9 +20,9 @@ run:
         - run.sh
       resources:
         requests:
-          nvidia.com/gpu: {{cookiecutter.distributed.num_gpus}}
+          nvidia.com/gpu: {{cookiecutter.num_gpus}}
         limits:
-          nvidia.com/gpu: {{cookiecutter.distributed.num_gpus}}
+          nvidia.com/gpu: {{cookiecutter.num_gpus}}
   worker:
     connections: {{cookiuecutter.connections}}
     environment:
@@ -37,6 +37,6 @@ run:
         - run.sh
       resources:
         requests:
-          nvidia.com/gpu: {{cookiecutter.distributed.num_gpus}}
+          nvidia.com/gpu: {{cookiecutter.num_gpus}}
         limits:
-          nvidia.com/gpu: {{cookiecutter.distributed.num_gpus}}
+          nvidia.com/gpu: {{cookiecutter.num_gpus}}

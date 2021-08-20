@@ -19,7 +19,7 @@ distributed: false
 distributed_val: false
 epochs: 1
 gpu: 0
-input_shape: DATES,BANDS,HEIGHT,WIDTH
+input_shape: 10,3,256,256
 local_artifacts_path: Datastore path where dataset should be copied if requried.
 loss: binary_jaccard
 loss_args:

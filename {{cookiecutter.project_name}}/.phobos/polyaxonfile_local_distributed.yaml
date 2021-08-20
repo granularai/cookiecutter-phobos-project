@@ -11,7 +11,7 @@ run:
     replicas: 1
     container:
       image: {{cookiecutter.image}}
-      workingDir: "{{ '{{' }}' globals.run_artifacts_path {{ '}} }}/code"
+      workingDir: "{{ '{{' }}' globals.run_artifacts_path {{ '}}' }}/code"
       command:
         - /bin/bash
         - run.sh

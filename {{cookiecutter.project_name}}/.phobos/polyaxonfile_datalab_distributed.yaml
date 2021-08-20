@@ -24,7 +24,7 @@ run:
         limits:
           nvidia.com/gpu: {{cookiecutter.num_gpus}}
   worker:
-    connections: {{cookiuecutter.connections}}
+    connections: {{cookiecutter.connections}}
     environment:
       nodeSelector:
         polyaxon: {{cookiecutter.node_pool}}

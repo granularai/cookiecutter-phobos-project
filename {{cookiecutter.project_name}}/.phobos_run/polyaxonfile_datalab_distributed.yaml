@@ -7,7 +7,7 @@ run:
   kind: pytorchjob
   cleanPodPolicy: 'All'
   master:
-    connections: {{cookiecutter.connections}}
+    connections: [datasets , artifacts-store]
     environment:
       nodeSelector:
         polyaxon: {{cookiecutter.node_pool}}
@@ -24,7 +24,7 @@ run:
         limits:
           nvidia.com/gpu: {{cookiecutter.num_gpus}}
   worker:
-    connections: {{cookiecutter.connections}}
+    connections: [datasets , artifacts-store]
     environment:
       nodeSelector:
         polyaxon: {{cookiecutter.node_pool}}

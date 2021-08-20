@@ -8,7 +8,7 @@ run:
   environment:
     nodeSelector:
       polyaxon: {{cookiecutter.node_pool}}
-  connections: {{cookiecutter.connections}}
+  connections: [datasets , artifacts-store]
   container:
     image: {{cookiecutter.image}}
     workingDir: "{{ '{{' }} globals.run_artifacts_path {{ '}}' }}/code"

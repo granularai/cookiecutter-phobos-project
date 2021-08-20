@@ -1,6 +1,5 @@
 {
     "project_name": "phobos_project",
-    "connections": ["datasets", "artifacts-store"],
 
     "node_pool": "v100-pool",
     "num_gpus": 1,

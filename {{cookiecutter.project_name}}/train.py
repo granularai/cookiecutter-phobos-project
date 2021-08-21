@@ -41,7 +41,7 @@ if not local_testing():
 """Initialize all arguments passed via metadata.json
 """
 grain_exp = Grain(polyaxon_exp=experiment)
-args = grain_exp.parse_args_from_json('metadata.json')
+args = grain_exp.parse_args_from_yaml('metadata.yaml')
 
 ################### Arguments ###################
 

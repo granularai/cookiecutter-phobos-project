@@ -133,17 +133,6 @@ if args.resume_checkpoint:
 
 criterion = get_loss(args.loss, args.loss_args)
 
-runner = Runner(device=0,
-                model=model,
-                criterion=criterion,
-                train_loader=train_loader,
-                val_loader=val_loader,
-                distributed=args.distributed,
-                metrics=args.metrics,
-                optimizer=args.optimizer,
-                optimizer_args=args.optimizer_args,
-                polyaxon_exp=experiment)
-
 runner = Runner(
     model=model,
     device=0,

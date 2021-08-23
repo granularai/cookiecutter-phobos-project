@@ -99,7 +99,7 @@ if args.model == 'dummy':
     """
     model = grain_exp.load_model(Dummy,
                                  n_channels=len(args.band_ids),
-                                 n_classes=1)
+                                 n_classes=args.num_classes)
 
 if args.pretrained_checkpoint:
     """
@@ -140,6 +140,9 @@ runner = Runner(
     train_loader=train_loader,
     val_loader=val_loader,
     optimizer=args.optimizer,
+    optimizer_args=args.optimizer_args,
+    scheduler=args.scheduler,
+    scheduler_args=args.scheduler_args,
     distributed=args.distributed,
     distributed_val=args.distributed_val,
     max_iters = args.max_iters,

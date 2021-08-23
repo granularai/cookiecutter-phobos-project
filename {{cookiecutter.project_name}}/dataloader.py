@@ -22,8 +22,8 @@ def get_train_val_metadata(args):
     tuple
         Tuple of train and validation samples.
     """
-    train_metadata = [1, 2]
-    val_metadata = [3, 4]
+    train_metadata = list(range(100))
+    val_metadata = list(range(101,150))
 
     return train_metadata, val_metadata
 
@@ -57,7 +57,7 @@ class DummyPreloader(data.Dataset):
             tuple: (image, target) where target is class_index
                    of the target class.
         """
-        return np.random.randn(1, 32, 32), np.zeros(32, 32)
+        return np.zeros((3,32,32),dtype=np.float32), np.zeros((1,32,32),dtype=np.float32)
 
     def __len__(self):
         return len(self.samples)

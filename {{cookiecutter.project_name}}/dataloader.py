@@ -1,3 +1,5 @@
+from phobos.dataset import getDistLoaders
+
 import os
 import random
 import glob
@@ -5,6 +7,8 @@ import glob
 import numpy as np
 
 import torch.utils.data as data
+
+
 
 
 def get_train_val_metadata(args):
@@ -18,8 +22,8 @@ def get_train_val_metadata(args):
     tuple
         Tuple of train and validation samples.
     """
-    train_metadata = [1, 2]
-    val_metadata = [3, 4]
+    train_metadata = list(range(100))
+    val_metadata = list(range(101,150))
 
     return train_metadata, val_metadata
 
@@ -53,7 +57,7 @@ class DummyPreloader(data.Dataset):
             tuple: (image, target) where target is class_index
                    of the target class.
         """
-        return np.random.randn(1, 32, 32), np.zeros(32, 32)
+        return np.zeros((3,32,32),dtype=np.float32), np.zeros((1,32,32),dtype=np.float32)
 
     def __len__(self):
         return len(self.samples)
@@ -79,14 +83,13 @@ def get_dataloaders(args):
     train_dataset = DummyPreloader(train_samples, args)
     val_dataset = DummyPreloader(val_samples, args)
 
-    train_loader = data.DataLoader(train_dataset,
-                                   batch_size=args.batch_size,
-                                   shuffle=True,
-                                   num_workers=args.num_workers,
-                                   pin_memory=True)
-    val_loader = data.DataLoader(val_dataset,
-                                 batch_size=args.batch_size,
-                                 shuffle=False,
-                                 num_workers=args.num_workers,
-                                 pin_memory=True)
+    train_loader, val_loader = getDistLoaders(
+        train_dataset,
+        val_dataset,
+        batch_size=args.batch_size,
+        num_workers=args.num_workers,
+        distributed=args.distributed,
+        distributed_val=args.distributed_val
+        )
+    
     return train_loader, val_loader
